@@ -2,8 +2,14 @@
 # This file is the entry point of your package. It will be loaded once as a
 # singleton.
 #
-# For more information: https://atom.io/docs/latest/creating-a-package#source-code
+# For more information:
+# https://atom.io/docs/latest/creating-a-package#source-code
 ###
+
+TuneSources = require "./models/tune-sources"
+Playlist = require "./models/playlist"
+SearchView = require "./views/search-view"
+PlaylistView = require "./views/playlist-view"
 
 module.exports =
 
@@ -17,9 +23,20 @@ module.exports =
     console.log 'activate(state)'
     console.log state
 
+    @tuneSources = new TuneSources()
+    @searchView = new SearchView(@tuneSources)
+
+    @playlist = new Playlist()
+    @playlistView = new PlaylistView(@playlist)
+
     workspace = atom.workspaceView
     workspace.command 'tunes:toggleBackground', =>
       @toggleBackground()
+    # Search
+    workspace.command 'tunes:toggleSearch', => @searchView.toggle()
+    # Playlist
+    workspace.command 'tunes:togglePlaylist', => @playlistView.toggle()
+
 
   ###
   # This optional method is called when the window is shutting down, allowing
